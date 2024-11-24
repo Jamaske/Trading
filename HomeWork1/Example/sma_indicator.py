@@ -3,22 +3,26 @@ from alt_backtest import indicator
 
 class SimpleMovingAverage(indicator.Indicator):
     lines = ('sma',)
-
+    
     def __init__(self, period: int):
         super().__init__()
         self.period = period
         self.mass = []
-
+        
+    
     def next(self):
         self.dataclose = self.get_price()
         if len(self.mass) ==self.period:
             self.mass.pop(0)
-        
+   
         self.mass.append(self.dataclose)
         
-        if(len(self.mass) < self.period): print(self.mass[-1])
-    
         self.lines.sma[0] = sum(self.mass) / len(self.mass)
 
     def is_ready(self) -> bool:
+        if(len(self.mass) < self.period):
+            
+            return False
+        else:
+            return True
         return len(self.mass) == self.period
